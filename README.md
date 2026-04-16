@@ -175,4 +175,4 @@ LISP 提供兩種編碼版本,請依你的系統環境挑選:
 
 ---
 
-*AutoCalArea v1.0 beta — 內部測試文件 — 2026*
+*AutoCalArea v1.0 beta — By CYChang — 2026*
