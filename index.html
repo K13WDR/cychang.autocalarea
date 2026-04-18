@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoCalArea v1.0 beta — 指令使用說明</title>
+<title>AutoCalArea v1.1 beta — 指令使用說明</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
 
@@ -445,14 +445,14 @@
 <div class="page">
 
   <header>
-    <span class="version-tag">v1.0 beta — 測試版</span>
+    <span class="version-tag">v1.1 beta — 內部測試版</span>
     <h1>
       AutoCalArea
       <span class="subtitle">CAD 自動面積計算與標註工具 — 指令使用說明</span>
     </h1>
     <div class="header-meta">
       <span>適用: <strong>AutoCAD LWPOLYLINE</strong></span>
-      <span>檔案: <strong>AutoCalAreaV1_Beta.lsp</strong></span>
+      <span>檔案: <strong>AutoCalAreaV1.1_Beta.lsp</strong></span>
       <span>測試對象: <strong>封閉多邊形 (70=1)</strong></span>
     </div>
   </header>
@@ -476,12 +476,12 @@
       </thead>
       <tbody>
         <tr>
-          <td><code>AutoCalAreaV1_Beta_Big5.lsp</code></td>
+          <td><code>AutoCalAreaV1.1_Beta_Big5.lsp</code></td>
           <td>Big5</td>
           <td>一般 Windows 繁體中文系統(預設環境,未啟用 UTF-8)</td>
         </tr>
         <tr>
-          <td><code>AutoCalAreaV1_Beta_UTF8.lsp</code></td>
+          <td><code>AutoCalAreaV1.1_Beta_UTF8.lsp</code></td>
           <td>UTF-8</td>
           <td>Windows 11 已啟用「世界各國語言支援 Unicode UTF-8」Beta 功能者</td>
         </tr>
@@ -619,6 +619,12 @@
           <td><kbd>Y</kbd></td>
           <td><code>0.8</code></td>
           <td>圓心標記、直角符號相對於文字高度的大小比例</td>
+        </tr>
+        <tr>
+          <td>主編號前綴</td>
+          <td><kbd>P</kbd></td>
+          <td><code>關閉</code></td>
+          <td>開關切換。開啟後圖面子編號加上主編號前綴 (如 <code>1-G1</code>)，計算式不受影響</td>
         </tr>
         <tr>
           <td>離開</td>
@@ -764,7 +770,7 @@
 
     <h3>極端情境</h3>
     <ul>
-      <li>大於 180° 的扇形(例如小精靈形狀)</li>
+      <li>大於 180° 的扇形(例如吃豆人形狀)</li>
       <li>內凹弓形 + 矩形組合</li>
       <li>極小或退化的子三角形(確認是否被自動過濾)</li>
     </ul>
@@ -795,8 +801,97 @@
     </ul>
   </section>
 
+  <section>
+    <h2 data-num="10">v1.1 更新內容</h2>
+
+    <h3>新功能：主編號前綴 (ACAO → P)</h3>
+    <p>在 <code>ACAO</code> 中新增 <kbd>P</kbd> 選項,可切換子編號是否加上主編號前綴,方便複雜圖面辨識各子形狀歸屬。</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 30%;">狀態</th>
+          <th style="width: 35%;">圖面子編號</th>
+          <th>計算式標籤</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>關閉 (預設)</td>
+          <td><code>G1</code>、<code>T1</code>、<code>A1</code></td>
+          <td><code>G1</code>、<code>T1</code>、<code>A1</code></td>
+        </tr>
+        <tr>
+          <td>開啟</td>
+          <td><code>1-G1</code>、<code>2-T1</code>、<code>3-A1</code></td>
+          <td><code>G1</code>、<code>T1</code>、<code>A1</code> (不變)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>前綴只影響圖面子編號圈的文字,計算表中的標籤與公式不加前綴,避免與計算式中的 <code>-</code> 號混淆。</p>
+
+    <h3>改進：弓形公式改寫</h3>
+    <p>弓形 (弓形 G) 的面積計算公式從 <code>(θ-sinθ)/2×r²</code> 改為<strong>「扇形面積 − 三角形面積」</strong>:</p>
+    <ul>
+      <li>扇形面積 = <code>(θ/360) × π × r²</code></li>
+      <li>三角形面積 = <code>底 × 高 / 2</code>(底 = 弦長, 高 = 圓心到弦的垂距)</li>
+    </ul>
+    <p><strong>計算式範例</strong>:</p>
+    <p style="font-family: 'JetBrains Mono', monospace; font-size: 14px; background: var(--key-bg); padding: 12px 16px; border-radius: 4px;">
+      G1: r=3.74m &nbsp;θ=158.7° &nbsp;(158.7/360)×π×(3.74)²-6.50×2.10/2=16.82m²
+    </p>
+    <p>此改動的好處:</p>
+    <ul>
+      <li>不再使用 <code>sin</code> 函數,閱讀者更容易理解與驗算</li>
+      <li>三角形在弓形內部直接計算完成,避免連續弧形時三角形重疊的問題</li>
+    </ul>
+
+    <h3>改進：弓形圖面標註擴充</h3>
+    <p>弓形在圖面上新增以下標註,讓公式中每個數字都有對應的尺寸線:</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 30%;">標註項目</th>
+          <th style="width: 22%;">圖層</th>
+          <th>說明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-ok">新增</span> 弦長標註</td>
+          <td><code>AREA-數值</code></td>
+          <td>弦的中點處,標示三角形的底長度</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-ok">新增</span> 圓心到弦垂直線</td>
+          <td><code>AREA-輔助線</code></td>
+          <td>從圓心到弦的垂足連線</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-ok">新增</span> 垂直線高標註</td>
+          <td><code>AREA-數值</code></td>
+          <td>垂直線中點處,標示三角形的高</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-ok">新增</span> 垂直符號</td>
+          <td><code>AREA-符號</code></td>
+          <td>弦與垂直線交點處的直角標記</td>
+        </tr>
+        <tr>
+          <td>半徑標註</td>
+          <td><code>AREA-數值</code></td>
+          <td>r=... (原有)</td>
+        </tr>
+        <tr>
+          <td>角度標註</td>
+          <td><code>AREA-數值</code></td>
+          <td>θ° (原有)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
   <footer>
-    AutoCalArea v1.0 beta &nbsp;/&nbsp; By CYChang &nbsp;/&nbsp; 2026
+    AutoCalArea v1.1 beta &nbsp;/&nbsp; By CYChang &nbsp;/&nbsp; 2026
   </footer>
 
 </div>
