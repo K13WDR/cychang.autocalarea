@@ -438,9 +438,70 @@
     td, th { padding: 8px 6px; }
     .cmd-card { padding: 20px; }
   }
+
+  /* Floating nav */
+  .floating-nav {
+    position: fixed;
+    top: 50%;
+    right: 24px;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .floating-nav a {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 14px 6px 10px;
+    border-right: 2px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .floating-nav a:hover {
+    color: var(--accent);
+    border-right-color: var(--accent);
+    background: var(--rule-soft);
+  }
+
+  .floating-nav a.active {
+    color: var(--accent);
+    border-right-color: var(--accent);
+    font-weight: 600;
+  }
+
+  @media (max-width: 1100px) {
+    .floating-nav { display: none; }
+  }
+
+  @media print {
+    .floating-nav { display: none; }
+  }
 </style>
 </head>
 <body>
+
+
+<nav class="floating-nav" id="floatingNav">
+  <a href="#file-version">01 檔案版本</a>
+  <a href="#commands">02 指令總覽</a>
+  <a href="#aca">03 ACA</a>
+  <a href="#acao">04 ACAO</a>
+  <a href="#acal">05 ACAL</a>
+  <a href="#acar">06 ACAR</a>
+  <a href="#layers">07 圖層</a>
+  <a href="#testing">08 測試重點</a>
+  <a href="#reporting">09 回報格式</a>
+  <a href="#changelog">10 更新內容</a>
+</nav>
 
 <div class="page">
 
@@ -463,7 +524,7 @@
   </div>
 
   <section>
-    <h2 data-num="01">檔案版本選擇</h2>
+    <h2 id="file-version" data-num="01">檔案版本選擇</h2>
     <p>本工具提供兩個編碼版本,請依你的系統環境選擇:</p>
 
     <table>
@@ -505,7 +566,7 @@
   </section>
 
   <section>
-    <h2 data-num="02">指令總覽</h2>
+    <h2 id="commands" data-num="02">指令總覽</h2>
     <table>
       <thead>
         <tr>
@@ -540,7 +601,7 @@
   </section>
 
   <section>
-    <h2 data-num="03">ACA — 主計算指令</h2>
+    <h2 id="aca" data-num="03">ACA — 主計算指令</h2>
 
     <div class="cmd-card">
       <div class="cmd-header">
@@ -577,7 +638,7 @@
   </section>
 
   <section>
-    <h2 data-num="04">ACAO — 參數設定</h2>
+    <h2 id="acao" data-num="04">ACAO — 參數設定</h2>
     <p>輸入 <code>ACAO</code> 後選擇要修改的選項。未修改的項目沿用上次設定。</p>
 
     <table>
@@ -637,7 +698,7 @@
   </section>
 
   <section>
-    <h2 data-num="05">ACAL — 子編號前綴設定</h2>
+    <h2 id="acal" data-num="05">ACAL — 子編號前綴設定</h2>
     <p>輸入 <code>ACAL</code> 後可分別自訂五種子形狀的編號字母。目前設定值會顯示在命令列,按 Enter 可保留原值。</p>
 
     <table>
@@ -691,12 +752,12 @@
   </section>
 
   <section>
-    <h2 data-num="06">ACAR — 重置</h2>
+    <h2 id="acar" data-num="06">ACAR — 重置</h2>
     <p>輸入 <code>ACAR</code> 立即將所有參數(文字高度、比例、行距、符號比例、前綴)全部還原為預設值。不需確認、不會影響已繪製的圖面內容。</p>
   </section>
 
   <section>
-    <h2 data-num="07">自動建立的圖層</h2>
+    <h2 id="layers" data-num="07">自動建立的圖層</h2>
     <p>指令執行時會自動建立以下圖層(若已存在則沿用)。你可以自行調整顯示、隱藏或列印屬性。</p>
 
     <table>
@@ -750,7 +811,7 @@
   </section>
 
   <section>
-    <h2 data-num="08">測試重點</h2>
+    <h2 id="testing" data-num="08">測試重點</h2>
     <p>請協助測試以下情境,並記錄結果。</p>
 
     <h3>基本形狀</h3>
@@ -791,7 +852,7 @@
   </section>
 
   <section>
-    <h2 data-num="09">回報格式</h2>
+    <h2 id="reporting" data-num="09">回報格式</h2>
     <p>發現問題或建議時,請提供以下資訊以便快速定位:</p>
     <ul>
       <li><strong>圖形截圖</strong>:包含主編號、子編號、所有標註、計算表</li>
@@ -802,7 +863,7 @@
   </section>
 
   <section>
-    <h2 data-num="10">v1.1 更新內容</h2>
+    <h2 id="changelog" data-num="10">v1.1 更新內容</h2>
 
     <h3>新功能：主編號前綴 (ACAO → P)</h3>
     <p>在 <code>ACAO</code> 中新增 <kbd>P</kbd> 選項,可切換子編號是否加上主編號前綴,方便複雜圖面辨識各子形狀歸屬。</p>
@@ -896,5 +957,29 @@
 
 </div>
 
+
+<script>
+(function() {
+  const nav = document.getElementById('floatingNav');
+  const links = nav.querySelectorAll('a');
+  const sections = Array.from(links).map(a => ({
+    link: a,
+    target: document.querySelector(a.getAttribute('href'))
+  })).filter(s => s.target);
+
+  function update() {
+    let current = sections[0];
+    const scrollY = window.scrollY + window.innerHeight * 0.3;
+    for (const s of sections) {
+      if (s.target.offsetTop <= scrollY) current = s;
+    }
+    links.forEach(a => a.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+</script>
 </body>
 </html>
